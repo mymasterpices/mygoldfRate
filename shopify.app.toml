@@ -1,0 +1,33 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "112e237bbd81ac4b61e665614d3c3928"
+name = "Gold Price"
+handle = "gold-price"
+application_url = "https://xi-limited-cook-tricks.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "thetelarana.myshopify.com"
+include_config_on_deploy = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products"
+
+[auth]
+redirect_urls = [
+  "https://xi-limited-cook-tricks.trycloudflare.com/auth/callback",
+  "https://xi-limited-cook-tricks.trycloudflare.com/auth/shopify/callback",
+  "https://xi-limited-cook-tricks.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-07"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "/webhooks"
+
+[pos]
+embedded = false
