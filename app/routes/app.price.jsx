@@ -47,6 +47,13 @@ export async function action({ request }) { // Destructure request here
   });
 
   return json({ message: "Setting updated" });
+
+  // const productList = await admin.rest.resources.Product.all({
+  //   session: session,
+  //   ids: "9607783416127,9607783285055",
+  // });
+
+  // console.log(productList);
 }
 
 export default function PricePage() {
