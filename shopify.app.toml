@@ -3,7 +3,7 @@
 client_id = "112e237bbd81ac4b61e665614d3c3928"
 name = "Gold Price"
 handle = "gold-price"
-application_url = "https://xi-limited-cook-tricks.trycloudflare.com"
+application_url = "https://naturals-clocks-accident-bi.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://xi-limited-cook-tricks.trycloudflare.com/auth/callback",
-  "https://xi-limited-cook-tricks.trycloudflare.com/auth/shopify/callback",
-  "https://xi-limited-cook-tricks.trycloudflare.com/api/auth/callback"
+  "https://naturals-clocks-accident-bi.trycloudflare.com/auth/callback",
+  "https://naturals-clocks-accident-bi.trycloudflare.com/auth/shopify/callback",
+  "https://naturals-clocks-accident-bi.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
