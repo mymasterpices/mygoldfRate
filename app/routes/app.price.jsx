@@ -18,7 +18,7 @@ import db from "../db.server";
 // Get data from database
 export async function loader() {
   let oldPrice = await db.Price.findFirst();
-  console.log("Gold price from database ------->", oldPrice);
+  console.log("Gold price from database -->", oldPrice);
   return json(oldPrice);
 }
 
@@ -47,14 +47,10 @@ export async function action({ request }) { // Destructure request here
   });
 
   return json({ message: "Setting updated" });
-
-  // const productList = await admin.rest.resources.Product.all({
-  //   session: session,
-  //   ids: "9607783416127,9607783285055",
-  // });
-
-  // console.log(productList);
+ 
 }
+// https://thetelarana.myshopify.com/admin/api/2024-04/products.json
+//https://112e237bbd81ac4b61e665614d3c3928:30cb04f7efc1e9c30401cbd191ad2ac3-1720699651@thetelarana.myshopify.com/admin/api/2024-04/products.json
 
 export default function PricePage() {
   const oldPrice = useLoaderData();

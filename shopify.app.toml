@@ -3,7 +3,7 @@
 client_id = "112e237bbd81ac4b61e665614d3c3928"
 name = "Gold Price"
 handle = "gold-price"
-application_url = "https://naturals-clocks-accident-bi.trycloudflare.com"
+application_url = "https://alignment-thats-seeing-diffs.trycloudflare.com"
 embedded = true
 
 [build]
@@ -13,13 +13,13 @@ include_config_on_deploy = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products"
+scopes = "read_products,write_products"
 
 [auth]
 redirect_urls = [
-  "https://naturals-clocks-accident-bi.trycloudflare.com/auth/callback",
-  "https://naturals-clocks-accident-bi.trycloudflare.com/auth/shopify/callback",
-  "https://naturals-clocks-accident-bi.trycloudflare.com/api/auth/callback"
+  "https://alignment-thats-seeing-diffs.trycloudflare.com/auth/callback",
+  "https://alignment-thats-seeing-diffs.trycloudflare.com/auth/shopify/callback",
+  "https://alignment-thats-seeing-diffs.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
