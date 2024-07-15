@@ -1,67 +1,102 @@
-
 import { useLoaderData } from "@remix-run/react";
-import {Card, Layout, Page} from "@shopify/polaris";
-import { apiVersion, authenticate} from "~/shopify.server";
-import { loaderFunction } from "@remix-run/node";
+import { Card, Layout, Page, Spinner } from "@shopify/polaris";
+import { json } from "@remix-run/node";
+import { apiVersion, authenticate } from "~/shopify.server";
 
-
-export const query =`{
-    collections(first: 10){
-        edges{
-            node{
-                id
-                handle
-                title
-                description
-                tags
+const query = `
+  query($first: Int!, $after: String) {
+    products(first: $first, after: $after, query: "tag:Gold_22K") {
+      edges {
+        node {
+          id
+          title
+          tags
+          priceRange {
+            minVariantPrice {
+              amount
             }
+          }
+            
         }
-        pageInfo{
-            hasNextPage
-        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
     }
-}`
+  }
+`;
 
-export const loader: loaderFunction = async({ request }) =>{
-    const {session} = await authenticate.admin(request)
-    const {shop, accessToken} = session;
+export const loader = async ({ request }) => {
+  const { session } = await authenticate.admin(request);
+  const { shop, accessToken } = session;
 
-    try{
-        const response = await fetch(`https://${shop}/admin/api/${apiVersion}/graphql.json`,{
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-shopify-Access-Token": accessToken
-            },
-            body: query
-        });
+  let allProducts = [];
+  let hasNextPage = true;
+  let endCursor = null;
 
-        if(response.status){
-            const data = await response.json();
-            const{
-                data: {
-                    collections: { edges }
-                }
-            } = data ;
-            return edges;
+  try {
+    while (hasNextPage) {
+      const response = await fetch(`https://${shop}/admin/api/${apiVersion}/graphql.json`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Shopify-Access-Token": accessToken,
+        },
+        body: JSON.stringify({
+          query,
+          variables: { first: 50, after: endCursor },
+        }),
+      });
 
-        }
-        return null;
-    } catch(err){
-        console.log(err);
+      if (!response.ok) {
+        throw new Error('Failed to fetch products');
+      }
+
+      const { data } = await response.json();
+      const { edges, pageInfo } = data.products;
+
+      allProducts = [...allProducts, ...edges];
+      hasNextPage = pageInfo.hasNextPage;
+      endCursor = pageInfo.endCursor;
     }
-}
 
-const Products =  () =>{
-    const collections: any = useLoaderData();
-    console.log(collections, collections list);
+    return json({ products: allProducts });
+  } catch (err) {
+    console.error(err);
+    return json({ products: [], error: err.message });
+  }
+};
 
-    return 
-    <div> 
+const Products = () => {
+  const { products, error } = useLoaderData();
 
-    
-   
-    </div>;
-}
+  if (error) {
+    return <Page title="Products with Tag 'Gold_22K'"><p>Error: {error}</p></Page>;
+  }
+
+  if (!products) {
+    return <Page title="Products with Tag 'Gold_22K'"><Spinner /></Page>;
+  }
+
+  return (
+    <Page title="Products with Tag 'Gold_22K'">
+      <Layout>
+        {products.length > 0 ? (
+          products.map(({ node }) => (
+            <Layout.Section key={node.id}>
+              <Card>
+                <h1>{node.title}</h1>
+                <p>Price: {node.priceRange.minVariantPrice.amount}</p>
+              </Card>
+            </Layout.Section>
+          ))
+        ) : (
+          <p>No products found with the tag 'Gold_22K'.</p>
+        )}
+      </Layout>
+    </Page>
+  );
+};
 
 export default Products;
