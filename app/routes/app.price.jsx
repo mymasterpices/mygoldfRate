@@ -30,7 +30,7 @@ export async function action({ request }) { // Destructure request here
   console.log(Price);
 
   // Update database price
-  await db.Price.upsert({
+   await db.Price.upsert({
     where: {
       id: "1",
     },
@@ -49,8 +49,7 @@ export async function action({ request }) { // Destructure request here
   return json({ message: "Setting updated" });
  
 }
-// https://thetelarana.myshopify.com/admin/api/2024-04/products.json
-//https://112e237bbd81ac4b61e665614d3c3928:30cb04f7efc1e9c30401cbd191ad2ac3-1720699651@thetelarana.myshopify.com/admin/api/2024-04/products.json
+
 
 export default function PricePage() {
   const oldPrice = useLoaderData();
@@ -92,9 +91,8 @@ export default function PricePage() {
                   name="gold_rate_18K"
                   helpText={<span>Enter 18k Gold rate</span>}
                 />
-                <Button variant="primary" submit={true}>
-                  Save
-                </Button>
+                 <Button onClick={()=>shopify.toast.show("New gold rate has been set")} submit={true} variant="primary"> Save New Rate</Button>
+               
               </Form>
             </BlockStack>
           </Card>

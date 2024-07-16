@@ -3,7 +3,7 @@
 client_id = "112e237bbd81ac4b61e665614d3c3928"
 name = "Gold Price"
 handle = "gold-price"
-application_url = "https://magnitude-europe-fuji-oc.trycloudflare.com"
+application_url = "https://jose-composite-ml-bloggers.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_products,write_products"
 
 [auth]
 redirect_urls = [
-  "https://magnitude-europe-fuji-oc.trycloudflare.com/auth/callback",
-  "https://magnitude-europe-fuji-oc.trycloudflare.com/auth/shopify/callback",
-  "https://magnitude-europe-fuji-oc.trycloudflare.com/api/auth/callback"
+  "https://jose-composite-ml-bloggers.trycloudflare.com/auth/callback",
+  "https://jose-composite-ml-bloggers.trycloudflare.com/auth/shopify/callback",
+  "https://jose-composite-ml-bloggers.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

@@ -3,6 +3,11 @@ import { Card, Layout, Page, Spinner } from "@shopify/polaris";
 import { json } from "@remix-run/node";
 import { apiVersion, authenticate } from "~/shopify.server";
 
+// Gold rate from prisma database
+import { PrismaClient } from '@prisma/client';
+
+
+
 const query = `
   query($first: Int!, $after: String) {
     products(first: $first, after: $after, query: "tag:Gold_22K") {
@@ -10,13 +15,14 @@ const query = `
         node {
           id
           title
-          tags
           priceRange {
             minVariantPrice {
               amount
             }
           }
-            
+          metafield(namespace: "custom_fields", key: "custom.gold_weight") {
+            value
+          }
         }
       }
       pageInfo {
@@ -28,6 +34,7 @@ const query = `
 `;
 
 export const loader = async ({ request }) => {
+  
   const { session } = await authenticate.admin(request);
   const { shop, accessToken } = session;
 
@@ -66,7 +73,13 @@ export const loader = async ({ request }) => {
     console.error(err);
     return json({ products: [], error: err.message });
   }
+
 };
+
+
+
+
+
 
 const Products = () => {
   const { products, error } = useLoaderData();
@@ -86,8 +99,12 @@ const Products = () => {
           products.map(({ node }) => (
             <Layout.Section key={node.id}>
               <Card>
-                <h1>{node.title}</h1>
+              <p>Title: {node.title}</p>
                 <p>Price: {node.priceRange.minVariantPrice.amount}</p>
+                {node.metafield && (
+                  <p>Gold Weight: {node.metafield.value}</p>
+                  
+                )}
               </Card>
             </Layout.Section>
           ))
