@@ -1,44 +1,127 @@
-import { Layout, Page, Card, Button } from "@shopify/polaris";
-import { json, useLoaderData } from "@remix-run/react";
-import { authenticate } from "~/shopify.server";
+import { useLoaderData } from "@remix-run/react";
+import { Card, Layout, Page, Spinner } from "@shopify/polaris";
+import { json } from "@remix-run/node";
+import { apiVersion, authenticate } from "~/shopify.server";
+
+// Gold rate from prisma database
+import { PrismaClient } from '@prisma/client';
+
+
+
+const query = `
+  query($first: Int!, $after: String) {
+    products(first: $first, after: $after, query: "tag:Gold_22K") {
+      edges {
+        node {
+          id
+          title
+          priceRange {
+            minVariantPrice {
+              amount
+            }
+          }
+          metafields(first: 10, namespace: "custom") {
+            edges {
+              node {
+                key
+                value
+              }
+            }
+          }
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+`;
+
 
 export const loader = async ({ request }) => {
-        const { admin } = await authenticate.admin(request)
+  
+  const { session } = await authenticate.admin(request);
+  const { shop, accessToken } = session;
 
-        const response = await admin.graphql(`
-            #graphql
-            query fetchPorducts {
-                shop {
-                    name
-                    id
-                }
-            }`)
-    
-    const shopData = (await (await response).json()).data
-    console.log(shopData);
-    // return null;
-    return json({
-        shop: shopData.shop
-    })
-        
-}
+  let allProducts = [];
+  let hasNextPage = true;
+  let endCursor = null;
 
-export default function Rate() {
-    const { shop } = useLoaderData();
-    return (
-        <Page>
-            <Layout>
-                <Layout.Section>
-                    <Card>
-                        <h2>Products</h2>
-                        <h2>Shop Name: {shop.name}.myshopify.com</h2>
-                    </Card>
-                </Layout.Section>
-                <Layout.Section>
-                    <Button  onClick={()=> shopify.toast.show("Displaying the shop name")}
-                    variant="primary">Update</Button>
-                </Layout.Section>
+  try {
+    while (hasNextPage) {
+      const response = await fetch(`https://${shop}/admin/api/${apiVersion}/graphql.json`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Shopify-Access-Token": accessToken,
+        },
+        body: JSON.stringify({
+          query,
+          variables: { first: 50, after: endCursor },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch products');
+      }
+
+      const { data } = await response.json();
+      const { edges, pageInfo } = data.products;
+
+      allProducts = [...allProducts, ...edges];
+      hasNextPage = pageInfo.hasNextPage;
+      endCursor = pageInfo.endCursor;
+    }
+
+    return json({ products: allProducts });
+  } catch (err) {
+    console.error(err);
+    return json({ products: [], error: err.message });
+  }
+
+};
+
+
+
+
+
+
+const Products = () => {
+  const { products, error } = useLoaderData();
+
+
+  return (
+      <Page title="Products with Tag 'Gold_22K'">
+           <Layout>
+                {products.length > 0 ? (
+                products.map(({ node }) => {
+                    // Parse the metafield value JSON
+                    let goldWeightValue = null;
+                    if (node.metafields.edges.length > 0) {
+                    const metafieldValue = JSON.parse(node.metafields.edges[0].node.value);
+                    goldWeightValue = metafieldValue.value;
+                    }
+
+                    return (
+                    <Layout.Section key={node.id}>
+                        <Card>
+                        <p>Title: {node.title}</p>
+                        <p>Product Id: {node.id }</p>
+                        <p>Price: {node.priceRange.minVariantPrice.amount}</p>
+                        {goldWeightValue && (
+                            <p>Gold Weight: {goldWeightValue}</p>
+                        )}
+                        </Card>
+                    </Layout.Section>
+                    );
+                })
+                ) : (
+                <p>No products found with the tag 'Gold_22K'.</p>
+                )}
             </Layout>
-        </Page>
-    );
-}
+    </Page>
+  );
+};
+
+export default Products;

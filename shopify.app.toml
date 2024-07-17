@@ -3,7 +3,7 @@
 client_id = "112e237bbd81ac4b61e665614d3c3928"
 name = "Gold Price"
 handle = "gold-price"
-application_url = "https://jose-composite-ml-bloggers.trycloudflare.com"
+application_url = "https://avi-privilege-oakland-pupils.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_products,write_products"
 
 [auth]
 redirect_urls = [
-  "https://jose-composite-ml-bloggers.trycloudflare.com/auth/callback",
-  "https://jose-composite-ml-bloggers.trycloudflare.com/auth/shopify/callback",
-  "https://jose-composite-ml-bloggers.trycloudflare.com/api/auth/callback"
+  "https://avi-privilege-oakland-pupils.trycloudflare.com/auth/callback",
+  "https://avi-privilege-oakland-pupils.trycloudflare.com/auth/shopify/callback",
+  "https://avi-privilege-oakland-pupils.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
