@@ -76,7 +76,7 @@ export const loader = async ({ request }) => {
       if (hasGold22KTag && goldWeightMetafield) {
         const goldWeight = parseFloat(goldWeightMetafield.node.value);
         const newPrice = goldWeight * goldRate;
-
+        // alert( newPrice);
         // Update the product price if it has changed
         if (newPrice !== currentPrice) {
           const updatePriceMutation = `
@@ -118,3 +118,6 @@ export const loader = async ({ request }) => {
     return toJson({ error: err.message });
   }
 };
+
+
+

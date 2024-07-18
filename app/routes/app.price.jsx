@@ -4,8 +4,9 @@ import {
   Card,
   FormLayout,
   TextField,
+  Text,
   Button,
-  BlockStack,
+  BlockStack,Grid, InlineStack
 } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { useState } from "react";
@@ -58,10 +59,54 @@ export default function PricePage() {
   return (
     <Page>
       <TitleBar title="Metal Price " />
-      <Layout>
+      <Layout >
+        <Layout.Section>
+          <Card >
+            <BlockStack gap="300">
+
+                <Text variant="headingMd" as="h2">Current Gold Rate</Text>
+              <Form method="POST">
+                <TextField
+                  disabled
+                  value={formState?.gold_rate_22K}
+                  onChange={(value) =>
+                    setFormState({
+                      ...formState,
+                      gold_rate_22K: value,
+                    })
+                  }
+                  label="22K Gold Rate"
+                  type="text"
+                  autoComplete="off"
+                  name="gold_rate_22K"
+                  helpText={<span>Enter 22k Gold rate</span>}
+                />
+                <TextField
+                  disabled
+                  value={formState?.gold_rate_18K}
+                  onChange={(value) =>
+                    setFormState({
+                      ...formState,
+                      gold_rate_18K: value,
+                    })
+                  }
+                  label="18K Gold Rate"
+                  type="text"
+                  autoComplete="off"
+                  name="gold_rate_18K"
+                  helpText={<span>Enter 18k Gold rate</span>}
+                />
+                
+               
+              </Form>
+            </BlockStack>
+          </Card>
+        </Layout.Section>
         <Layout.Section>
           <Card>
             <BlockStack gap="300">
+
+                <Text variant="headingMd" as="h2">Update New Gold Rate</Text>
               <Form method="POST">
                 <TextField
                   value={formState?.gold_rate_22K}
