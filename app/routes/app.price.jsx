@@ -31,7 +31,7 @@ export async function action({ request }) { // Destructure request here
   console.log(Price);
 
   // Update database price
-   await db.Price.upsert({
+   const UpdatePrice = await db.Price.upsert({
     where: {
       id: "1",
     },
@@ -48,7 +48,7 @@ export async function action({ request }) { // Destructure request here
   });
 
   return json({ message: "Setting updated" });
- 
+  
 }
 
 

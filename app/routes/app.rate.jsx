@@ -1,9 +1,5 @@
 import { authenticate } from "~/shopify.server"; // Adjust the import path as needed
-
-// Example of a function to convert objects to JSON
-const toJson = (obj) => {
-  return JSON.stringify(obj);
-};
+import { json } from "@remix-run/node"; // Import the json function from the Remix framework
 
 export const loader = async ({ request }) => {
   try {
@@ -73,10 +69,18 @@ export const loader = async ({ request }) => {
       const hasGold22KTag = productTags.includes('Gold_22K');
       const goldWeightMetafield = productMetafields.find(metafield => metafield.node.key === 'custom.gold_weight');
 
+      console.log(`Product ID: ${productId}`);
+      console.log(`Tags: ${productTags}`);
+      console.log(`Gold Weight Metafield: ${goldWeightMetafield ? goldWeightMetafield.node.value : 'Not found'}`);
+
       if (hasGold22KTag && goldWeightMetafield) {
         const goldWeight = parseFloat(goldWeightMetafield.node.value);
         const newPrice = goldWeight * goldRate;
-        // alert( newPrice);
+
+        console.log(`Gold Weight: ${goldWeight}`);
+        console.log(`New Price: ${newPrice}`);
+        console.log(`Current Price: ${currentPrice}`);
+
         // Update the product price if it has changed
         if (newPrice !== currentPrice) {
           const updatePriceMutation = `
@@ -105,19 +109,18 @@ export const loader = async ({ request }) => {
             throw new Error('Failed to update product price');
           }
 
+          const updateResult = await updateResponse.json();
+          console.log(`Update Response: ${JSON.stringify(updateResult)}`);
+
           console.log(`Updated price for Product ID ${productId} to ${newPrice}`);
         }
       }
     }
 
-    // Return JSON response using the toJson function or JSON.stringify
-    return toJson({ success: true });
+    return json({ success: true });
   } catch (err) {
     console.error(err);
-    // Return JSON error response using the toJson function or JSON.stringify
-    return toJson({ error: err.message });
+    return json({ error: err.message });
   }
 };
-
-
 

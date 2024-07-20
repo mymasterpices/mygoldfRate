@@ -1,50 +1,56 @@
-import { useLoaderData } from "@remix-run/react";
-import { Card, Layout, Page, Spinner } from "@shopify/polaris";
-import { json } from "@remix-run/node";
-import { apiVersion, authenticate } from "~/shopify.server";
+import { authenticate } from "~/shopify.server"; // Adjust the import path as needed
+import { json } from "@remix-run/node"; // Import the json function from the Remix framework
 
-// Gold rate from prisma database
-import { PrismaClient } from '@prisma/client';
+export const loader = async ({ request }) => {
+  try {
+    // Authenticate and retrieve session details
+    const { session } = await authenticate.admin(request);
+    const { shop, accessToken } = session;
 
+    const apiVersion = '2024-07'; // Replace with your Shopify API version
+    const graphqlEndpoint = `https://${shop}/admin/api/${apiVersion}/graphql.json`;
 
-
-const query = `
-  query($first: Int!, $after: String) {
-    products(first: $first, after: $after, query: "tag:Gold_22K") {
-      edges {
-        node {
-          id
-          title
-          priceRange {
-            minVariantPrice {
-              amount
+    const query = `
+      query($cursor: String) {
+        products(first: 250, after: $cursor) {
+          edges {
+            node {
+              id
+              title
+              tags
+              metafields(first: 10) {
+                edges {
+                  node {
+                    namespace
+                    key
+                    value
+                  }
+                }
+              }
+              variants(first: 1) {
+                edges {
+                  node {
+                    id
+                    price
+                  }
+                }
+              }
             }
           }
-          metafield(namespace: "custom_fields", key: "custom.gold_weight") {
-            value
+          pageInfo {
+            hasNextPage
+            endCursor
           }
         }
       }
-      pageInfo {
-        hasNextPage
-        endCursor
-      }
-    }
-  }
-`;
+    `;
 
-export const loader = async ({ request }) => {
-  
-  const { session } = await authenticate.admin(request);
-  const { shop, accessToken } = session;
+    let hasNextPage = true;
+    let endCursor = null;
+    const allProducts = [];
 
-  let allProducts = [];
-  let hasNextPage = true;
-  let endCursor = null;
-
-  try {
     while (hasNextPage) {
-      const response = await fetch(`https://${shop}/admin/api/${apiVersion}/graphql.json`, {
+      const response = await fetch(graphqlEndpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -52,7 +58,7 @@ export const loader = async ({ request }) => {
         },
         body: JSON.stringify({
           query,
-          variables: { first: 50, after: endCursor },
+          variables: { cursor: endCursor },
         }),
       });
 
@@ -61,59 +67,80 @@ export const loader = async ({ request }) => {
       }
 
       const { data } = await response.json();
-      const { edges, pageInfo } = data.products;
+      const products = data.products.edges;
+      const pageInfo = data.products.pageInfo;
 
-      allProducts = [...allProducts, ...edges];
+      allProducts.push(...products);
       hasNextPage = pageInfo.hasNextPage;
       endCursor = pageInfo.endCursor;
     }
 
-    return json({ products: allProducts });
+    const goldRate = 7000; // Assuming gold rate is 7000 per gram
+    const gold22KProducts = allProducts.filter(({ node }) => node.tags.includes('Gold_22K'));
+
+
+    const updatedProducts = [];
+
+    for (const { node } of gold22KProducts) {
+      const goldWeightMetafield = node.metafields.edges.find(
+        (metafield) => metafield.node.namespace === 'custom' && metafield.node.key === 'gold_weight'
+      );
+
+      if (goldWeightMetafield) {
+        const goldWeight = JSON.parse(goldWeightMetafield.node.value).value;
+        
+        const newPrice = (goldWeight * goldRate).toFixed(2);
+        //Display new price in console
+        console.log(newPrice);
+        
+
+        const variantId = node.variants.edges[0]?.node.id;
+        
+
+        const updatePriceMutation = `
+          mutation {
+            productVariantUpdate(input: {
+              id: "${variantId}",
+              price: "${newPrice}"
+            }) {
+              product {
+                id
+              }
+            }
+          }
+        `;
+
+        const updateResponse = await fetch(graphqlEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Shopify-Access-Token": accessToken,
+          },
+          body: JSON.stringify({ query: updatePriceMutation }),
+        });
+
+        // console.log(updateResponse);
+
+        if (!updateResponse.ok) {
+          throw new Error('Failed to update product price');
+        }
+        
+
+        updatedProducts.push({
+          id: node.id,
+          title: node.title,
+          oldPrice: node.variants.edges[0]?.node.price,
+          newPrice,
+        });
+
+      }
+    }
+
+    return json({ success: true, updatedProducts });
   } catch (err) {
     console.error(err);
-    return json({ products: [], error: err.message });
+    return json({ error: err.message });
   }
-
 };
 
 
-
-
-
-
-const Products = () => {
-  const { products, error } = useLoaderData();
-
-  if (error) {
-    return <Page title="Products with Tag 'Gold_22K'"><p>Error: {error}</p></Page>;
-  }
-
-  if (!products) {
-    return <Page title="Products with Tag 'Gold_22K'"><Spinner /></Page>;
-  }
-
-  return (
-    <Page title="Products with Tag 'Gold_22K'">
-      <Layout>
-        {products.length > 0 ? (
-          products.map(({ node }) => (
-            <Layout.Section key={node.id}>
-              <Card>
-              <p>Title: {node.title}</p>
-                <p>Price: {node.priceRange.minVariantPrice.amount}</p>
-                {node.metafield && (
-                  <p>Gold Weight: {node.metafield.value}</p>
-                  
-                )}
-              </Card>
-            </Layout.Section>
-          ))
-        ) : (
-          <p>No products found with the tag 'Gold_22K'.</p>
-        )}
-      </Layout>
-    </Page>
-  );
-};
-
-export default Products;
