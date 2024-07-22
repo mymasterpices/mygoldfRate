@@ -1,14 +1,20 @@
 import { authenticate } from "~/shopify.server"; // Adjust the import path as needed
 import { json } from "@remix-run/node"; // Import the json function from the Remix framework
 
-// Import Prisma db -> import gold rate from prisma db
+// Import Prisma db
 import db from "../db.server";
 
 export const loader = async ({ request }) => {
   //Get data from database
-  let getGoldRate = await db.Price.findFirst();
+  // let oldPrice = await db.Price.findFirst();
+  // console.log("Gold price from database -->", oldPrice);
+
   //Get gold_rate_22K from database
-   console.log("New Gold Rate -->", getGoldRate.gold_rate_22K);
+  // console.log("Gold 22K Rate -->", json(oldPrice);
+
+
+  // Return the data as JSON
+  // return json(oldPrice);
 
   try {
     // Authenticate and retrieve session details
@@ -83,8 +89,9 @@ export const loader = async ({ request }) => {
       endCursor = pageInfo.endCursor;
     }
 
-    const goldRate = getGoldRate.gold_rate_22K; // assigning gold rate per grams
+    const goldRate = 7000; // Assuming gold rate is 7000 per gram
     const gold22KProducts = allProducts.filter(({ node }) => node.tags.includes('Gold_22K'));
+
 
     const updatedProducts = [];
 
@@ -100,8 +107,10 @@ export const loader = async ({ request }) => {
         //Display new price in console
         console.log(newPrice);
         
+
         const variantId = node.variants.edges[0]?.node.id;
         
+
         const updatePriceMutation = `
           mutation {
             productVariantUpdate(input: {

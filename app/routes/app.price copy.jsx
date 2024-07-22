@@ -6,7 +6,7 @@ import {
   TextField,
   Text,
   Button,
-  BlockStack,ButtonGroup
+  BlockStack,Grid, InlineStack
 } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { useState } from "react";
@@ -15,7 +15,6 @@ import { useLoaderData, Form } from "@remix-run/react";
 
 // Import Prisma db
 import db from "../db.server";
-
 
 // Get data from database
 export async function loader() {
@@ -55,7 +54,6 @@ export default function PricePage() {
   const oldPrice = useLoaderData();
   const [formState, setFormState] = useState(oldPrice);
 
-
   return (
     <Page>
       <TitleBar title="Metal Price " />
@@ -89,6 +87,7 @@ export default function PricePage() {
         <Layout.Section>
           <Card>
             <BlockStack gap="300">
+
                 <Text variant="headingMd" as="h2">Update New Gold Rate (Rate per/grams)</Text>
               <Form method="POST">
                 <TextField
@@ -105,11 +104,7 @@ export default function PricePage() {
                   name="gold_rate_22K"
                   helpText={<span>Enter 22k Gold rate</span>}
                 />
-                <ButtonGroup>
-                  <Button onClick={() => shopify.toast.show("New gold rate has been set")} submit={true} variant="primary"> Save New Rate</Button>
-                  
-                  <Button > Apply rate on products</Button>
-                 </ButtonGroup>
+                 <Button onClick={()=>shopify.toast.show("New gold rate has been set")} submit={true} variant="primary"> Save New Rate</Button>
                
               </Form>
             </BlockStack>

@@ -3,7 +3,7 @@
 client_id = "112e237bbd81ac4b61e665614d3c3928"
 name = "Gold Price"
 handle = "gold-price"
-application_url = "https://dallas-expert-glass-expression.trycloudflare.com"
+application_url = "https://value-structured-floyd-laboratory.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_customers,read_draft_orders,read_inventory,read_orders,read_produ
 
 [auth]
 redirect_urls = [
-  "https://dallas-expert-glass-expression.trycloudflare.com/auth/callback",
-  "https://dallas-expert-glass-expression.trycloudflare.com/auth/shopify/callback",
-  "https://dallas-expert-glass-expression.trycloudflare.com/api/auth/callback"
+  "https://value-structured-floyd-laboratory.trycloudflare.com/auth/callback",
+  "https://value-structured-floyd-laboratory.trycloudflare.com/auth/shopify/callback",
+  "https://value-structured-floyd-laboratory.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
