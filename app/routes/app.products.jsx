@@ -1,14 +1,30 @@
+
+import {
+  Page,
+  Layout,
+  Card,
+  Button, BlockStack, EmptyState, Text,
+} from "@shopify/polaris";
 import { authenticate } from "~/shopify.server"; // Adjust the import path as needed
+import { TitleBar } from "@shopify/app-bridge-react";
 import { json } from "@remix-run/node"; // Import the json function from the Remix framework
+
+import { useFetcher, Form } from "@remix-run/react";
 
 // Import Prisma db -> import gold rate from prisma db
 import db from "../db.server";
 
-export const loader = async ({ request }) => {
+// export const loader = async ({ request }) => {
+//   await authenticate.admin(request);
+
+//   return null;
+// };
+
+export const action = async ({ request }) => {
   //Get data from database
   let getGoldRate = await db.Price.findFirst();
   //Get gold_rate_22K from database
-   console.log("New Gold Rate -->", getGoldRate.gold_rate_22K);
+  console.log("New Gold Rate -->", getGoldRate.gold_rate_22K);
 
   try {
     // Authenticate and retrieve session details
@@ -95,13 +111,13 @@ export const loader = async ({ request }) => {
 
       if (goldWeightMetafield) {
         const goldWeight = JSON.parse(goldWeightMetafield.node.value).value;
-        
+
         const newPrice = (goldWeight * goldRate).toFixed(2);
         //Display new price in console
         console.log(newPrice);
-        
+
         const variantId = node.variants.edges[0]?.node.id;
-        
+
         const updatePriceMutation = `
           mutation {
             productVariantUpdate(input: {
@@ -129,7 +145,7 @@ export const loader = async ({ request }) => {
         if (!updateResponse.ok) {
           throw new Error('Failed to update product price');
         }
-        
+
 
         updatedProducts.push({
           id: node.id,
@@ -149,3 +165,33 @@ export const loader = async ({ request }) => {
 };
 
 
+export default function goldRate() {
+  const fetcher = useFetcher();
+  const updateNewprice = () => fetcher.submit({}, { method: "POST" });
+
+  return (
+    <Page>
+      <TitleBar title="Gold Product Price">
+
+      </TitleBar>
+      <BlockStack gap="500">
+        <Layout>
+          <Layout.Section>
+            <Card>
+              <BlockStack>
+                <Text variant="headingMd" as="h2">Set new gold rate to the whole store</Text>
+                <Form method="POST">
+                  <p>The new gold product prcing will acffact the product rate in live website</p>
+                  <br />
+                  <Button variant="primary" onClick={updateNewprice}>
+                    Update new rate to all products
+                  </Button>
+                </Form>
+              </BlockStack>
+            </Card>
+          </Layout.Section>
+        </Layout>
+      </BlockStack>
+    </Page>
+  );
+}

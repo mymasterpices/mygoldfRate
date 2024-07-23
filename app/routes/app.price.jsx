@@ -6,16 +6,15 @@ import {
   TextField,
   Text,
   Button,
-  BlockStack,ButtonGroup
+  BlockStack, ButtonGroup
 } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { useState } from "react";
 import { json } from "@remix-run/node";
-import { useLoaderData, Form } from "@remix-run/react";
+import { useLoaderData, Form, useNavigate } from "@remix-run/react";
 
 // Import Prisma db
 import db from "../db.server";
-
 
 // Get data from database
 export async function loader() {
@@ -32,7 +31,7 @@ export async function action({ request }) { // Destructure request here
   console.log(Price);
 
   // Update database price
-   const UpdatePrice = await db.Price.upsert({
+  const UpdatePrice = await db.Price.upsert({
     where: {
       id: "1",
     },
@@ -47,14 +46,15 @@ export async function action({ request }) { // Destructure request here
   });
 
   return json({ message: "Setting updated" });
-  
+
+
+
 }
 
-
 export default function PricePage() {
+  const navigate = useNavigate();
   const oldPrice = useLoaderData();
   const [formState, setFormState] = useState(oldPrice);
-
 
   return (
     <Page>
@@ -64,7 +64,7 @@ export default function PricePage() {
           <Card >
             <BlockStack gap="300">
 
-                <Text variant="headingMd" as="h2">Current Gold Rate (Rate per/grams)</Text>
+              <Text variant="headingMd" as="h2">Current Gold Rate (Rate per/grams)</Text>
               <Form method="POST">
                 <TextField
                   disabled
@@ -81,7 +81,7 @@ export default function PricePage() {
                   name="gold_rate_22K"
                   helpText={<span>Enter 22k Gold rate</span>}
                 />
-                
+
               </Form>
             </BlockStack>
           </Card>
@@ -89,7 +89,7 @@ export default function PricePage() {
         <Layout.Section>
           <Card>
             <BlockStack gap="300">
-                <Text variant="headingMd" as="h2">Update New Gold Rate (Rate per/grams)</Text>
+              <Text variant="headingMd" as="h2">Update New Gold Rate (Rate per/grams)</Text>
               <Form method="POST">
                 <TextField
                   value={formState?.gold_rate_22K}
@@ -107,10 +107,11 @@ export default function PricePage() {
                 />
                 <ButtonGroup>
                   <Button onClick={() => shopify.toast.show("New gold rate has been set")} submit={true} variant="primary"> Save New Rate</Button>
-                  
-                  <Button > Apply rate on products</Button>
-                 </ButtonGroup>
-               
+
+
+                  <Button onClick={() => navigate("../products")}>Apply new rate</Button>
+                </ButtonGroup>
+
               </Form>
             </BlockStack>
           </Card>
