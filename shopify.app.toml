@@ -3,7 +3,7 @@
 client_id = "112e237bbd81ac4b61e665614d3c3928"
 name = "Gold Price"
 handle = "gold-price"
-application_url = "https://glistening-buttercream-61f227.netlify.app/"
+application_url = "https://printing-broken-modifications-videos.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "read_customers,read_draft_orders,read_inventory,read_orders,read_produ
 
 [auth]
 redirect_urls = [
-  "https://glistening-buttercream-61f227.netlify.app//auth/callback",
-  "https://glistening-buttercream-61f227.netlify.app//auth/shopify/callback",
-  "https://glistening-buttercream-61f227.netlify.app//api/auth/callback"
+  "https://printing-broken-modifications-videos.trycloudflare.com/auth/callback",
+  "https://printing-broken-modifications-videos.trycloudflare.com/auth/shopify/callback",
+  "https://printing-broken-modifications-videos.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
