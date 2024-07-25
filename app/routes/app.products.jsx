@@ -13,12 +13,7 @@ import { useFetcher, Form } from "@remix-run/react";
 
 // Import Prisma db -> import gold rate from prisma db
 import db from "../db.server";
-
-// export const loader = async ({ request }) => {
-//   await authenticate.admin(request);
-
-//   return null;
-// };
+import { NotFoundError } from "@prisma/client/runtime/library";
 
 export const action = async ({ request }) => {
   //Get data from database
@@ -195,3 +190,6 @@ export default function goldRate() {
     </Page>
   );
 }
+
+
+
