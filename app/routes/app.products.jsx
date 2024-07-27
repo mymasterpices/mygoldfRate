@@ -3,17 +3,17 @@ import {
   Page,
   Layout,
   Card,
-  Button, BlockStack, EmptyState, Text,
+  Button, BlockStack, EmptyState, Text, Spinner
 } from "@shopify/polaris";
 import { authenticate } from "~/shopify.server"; // Adjust the import path as needed
 import { TitleBar } from "@shopify/app-bridge-react";
 import { json } from "@remix-run/node"; // Import the json function from the Remix framework
+import React, { useState, useEffect } from 'react';
 
 import { useFetcher, Form } from "@remix-run/react";
 
 // Import Prisma db -> import gold rate from prisma db
 import db from "../db.server";
-import { NotFoundError } from "@prisma/client/runtime/library";
 
 export const action = async ({ request }) => {
   //Get data from database
@@ -161,9 +161,22 @@ export const action = async ({ request }) => {
 
 
 export default function goldRate() {
-  const fetcher = useFetcher();
-  const updateNewprice = () => fetcher.submit({}, { method: "POST" });
 
+  const fetcher = useFetcher();
+  const [loading, setLoading] = useState(false);
+
+  // Detect the fetcher's state change
+  useEffect(() => {
+    if (fetcher.state === "submitting") {
+      setLoading(true);
+    } else if (fetcher.state === "idle") {
+      setLoading(false);
+    }
+  }, [fetcher.state]);
+
+  const updateNewprice = () => {
+    fetcher.submit({}, { method: "POST" });
+  };
   return (
     <Page>
       <TitleBar title="Gold Product Price">
@@ -178,9 +191,11 @@ export default function goldRate() {
                 <Form method="POST">
                   <p>The new gold product prcing will acffact the product rate in live website</p>
                   <br />
-                  <Button variant="primary" onClick={updateNewprice}>
-                    Update new rate to all products
+                  <Button variant="primary" onClick={updateNewprice} disabled={loading}>
+                    {loading ? 'Updating...' : 'Apply rates to all products'}
+                    {loading && <Spinner size="small" />}
                   </Button>
+
                 </Form>
               </BlockStack>
             </Card>
