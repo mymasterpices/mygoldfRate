@@ -109,7 +109,7 @@ export default function PricePage() {
                   <Button onClick={() => shopify.toast.show("New gold rate has been set")} submit={true} variant="primary"> Save New Rate</Button>
 
 
-                  <Button onClick={() => navigate("../products")}>Apply new rate</Button>
+                  <Button onClick={() => navigate("../products")}> Next</Button>
                 </ButtonGroup>
 
               </Form>
