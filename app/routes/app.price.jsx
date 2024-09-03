@@ -18,12 +18,12 @@ import db from "../db.server";
 
 // Get data from database
 export async function loader() {
-  let oldPrice = await db.Price.findFirst();
+  let oldPrice = await db.GoldGSTRates.findFirst();
   console.log("Gold price from database -->", oldPrice);
   return json(oldPrice);
 }
 
-export async function action({ request }) { // Destructure request here
+export async function action({ request }) {
   // Save data to database
   let newPrice = await request.formData();
   let Price = Object.fromEntries(newPrice);
@@ -31,7 +31,7 @@ export async function action({ request }) { // Destructure request here
   console.log(Price);
 
   // Update database price
-  const UpdatePrice = await db.Price.upsert({
+  const UpdatePrice = await db.GoldGSTRates.upsert({
     where: {
       id: "1",
     },
@@ -46,8 +46,6 @@ export async function action({ request }) { // Destructure request here
   });
 
   return json({ message: "Setting updated" });
-
-
 
 }
 

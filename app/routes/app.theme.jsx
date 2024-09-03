@@ -1,21 +1,49 @@
+
+import {
+  Page,
+  Layout,
+  Card,
+  Button, BlockStack, EmptyState, Text, Spinner
+} from "@shopify/polaris";
 import { authenticate } from "~/shopify.server"; // Adjust the import path as needed
+import { TitleBar } from "@shopify/app-bridge-react";
 import { json } from "@remix-run/node"; // Import the json function from the Remix framework
+import React, { useState, useEffect } from 'react';
+
+import { useFetcher, Form } from "@remix-run/react";
 
 // Import Prisma db -> import gold rate from prisma db
 import db from "../db.server";
 
-export const loader = async ({ request }) => {
+
+// export async function loader() {
+//   // Get gold_rate_22K from the database
+//   let getGoldRate = await db.Price.findFirst();
+//   if (!getGoldRate) {
+//     return json(null);
+//   }
+
+//   console.log("New Gold Rate -->", getGoldRate.gold_rate_22K);
+
+//   // Return the gold rate as JSON
+//   return json({ goldRate22K: getGoldRate.gold_rate_22K });
+// }
+
+
+
+export const action = async ({ request }) => {
   //Get data from database
   let getGoldRate = await db.Price.findFirst();
   //Get gold_rate_22K from database
-   console.log("New Gold Rate -->", getGoldRate.gold_rate_22K);
+  console.log("New Gold Rate -->", getGoldRate.gold_rate_22K);
+
+  // Authenticate and retrieve session details
+  const { session } = await authenticate.admin(request);
+  const { shop, accessToken } = session;
+
+  const apiVersion = '2024-07'; // Replace with your Shopify API version
 
   try {
-    // Authenticate and retrieve session details
-    const { session } = await authenticate.admin(request);
-    const { shop, accessToken } = session;
-
-    const apiVersion = '2024-07'; // Replace with your Shopify API version
     const graphqlEndpoint = `https://${shop}/admin/api/${apiVersion}/graphql.json`;
 
     const query = `
@@ -95,13 +123,13 @@ export const loader = async ({ request }) => {
 
       if (goldWeightMetafield) {
         const goldWeight = JSON.parse(goldWeightMetafield.node.value).value;
-        
+
         const newPrice = (goldWeight * goldRate).toFixed(2);
         //Display new price in console
         console.log(newPrice);
-        
+
         const variantId = node.variants.edges[0]?.node.id;
-        
+
         const updatePriceMutation = `
           mutation {
             productVariantUpdate(input: {
@@ -129,7 +157,7 @@ export const loader = async ({ request }) => {
         if (!updateResponse.ok) {
           throw new Error('Failed to update product price');
         }
-        
+
 
         updatedProducts.push({
           id: node.id,
@@ -148,4 +176,52 @@ export const loader = async ({ request }) => {
   }
 };
 
- 
+
+export default function goldRate() {
+
+  const fetcher = useFetcher();
+  const [loading, setLoading] = useState(false);
+
+  // Detect the fetcher's state change
+  useEffect(() => {
+    if (fetcher.state === "submitting") {
+      setLoading(true);
+    } else if (fetcher.state === "idle") {
+      setLoading(false);
+    }
+  }, [fetcher.state]);
+
+  const updateNewprice = () => {
+    fetcher.submit({}, { method: "POST" });
+  };
+  return (
+    <Page>
+      <TitleBar title="Gold Product Price">
+
+      </TitleBar>
+      <BlockStack gap="500">
+        <Layout>
+          <Layout.Section>
+            <Card>
+              <BlockStack>
+                <Text variant="headingMd" as="h2">Set new gold rate to the whole store</Text>
+                <Form method="POST">
+                  <p>The new gold product prcing will acffact the product rate in live website</p>
+                  <br />
+                  <Button variant="primary" onClick={updateNewprice} disabled={loading}>
+                    {loading ? 'Updating...' : 'Apply rates to all products'}
+                    {loading && <Spinner size="small" />}
+                  </Button>
+
+                </Form>
+              </BlockStack>
+            </Card>
+          </Layout.Section>
+        </Layout>
+      </BlockStack>
+    </Page>
+  );
+}
+
+
+
