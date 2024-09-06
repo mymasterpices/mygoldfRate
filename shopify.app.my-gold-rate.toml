@@ -3,7 +3,7 @@
 client_id = "cef7da2705aec251562807b34c1e524b"
 name = "My Gold Rate"
 handle = "my-gold-rate"
-application_url = "https://posted-bike-rule-carried.trycloudflare.com"
+application_url = "https://mineral-remembered-spectrum-pressure.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,9 +16,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://posted-bike-rule-carried.trycloudflare.com/auth/callback",
-  "https://posted-bike-rule-carried.trycloudflare.com/auth/shopify/callback",
-  "https://posted-bike-rule-carried.trycloudflare.com/api/auth/callback"
+  "https://mineral-remembered-spectrum-pressure.trycloudflare.com/auth/callback",
+  "https://mineral-remembered-spectrum-pressure.trycloudflare.com/auth/shopify/callback",
+  "https://mineral-remembered-spectrum-pressure.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

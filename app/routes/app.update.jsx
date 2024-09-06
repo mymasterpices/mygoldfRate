@@ -68,7 +68,6 @@ export default function Update() {
                             helpText="22K gold rate of 1/g"
                         />
                         <TextField
-                            requiredIndicator="true"
                             label="GST Rate"
                             name="gstRate"
                             value={formState?.gstR}

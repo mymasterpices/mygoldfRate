@@ -33,7 +33,6 @@
     "@shopify/shopify-api": "^11.1.0",
     "@shopify/shopify-app-remix": "^3.0.1",
     "@shopify/shopify-app-session-storage-prisma": "^5.0.1",
-    "axios": "^1.7.2",
     "isbot": "^5.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
