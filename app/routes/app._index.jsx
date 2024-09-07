@@ -116,7 +116,7 @@ export default function Index() {
             heading="Manage your gold product pricing system"
             action={{
               content: 'Add/Update Gold Price',
-              url: './price'
+              url: './update'
             }}
             url="/price"
             // secondaryAction={{

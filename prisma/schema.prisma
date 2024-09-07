@@ -31,8 +31,8 @@ model Session {
   emailVerified Boolean?  @default(false)
 }
 
-model Price {
-  id            String    @id
-  gold_rate_22K         String?
-  gold_rate_18K         String?
+model goldGSTRates {
+  id              String   @id
+  gold_rate_22K   String?
+  gstRate         String?
 }

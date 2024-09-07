@@ -23,9 +23,13 @@ export default function App() {
         <Link to="/app" rel="home">
           Home
         </Link>
-        <Link to="/app/price">Metal Price</Link>
-        <Link to="/app/products">Products </Link>
-        {/* <Link to="/app/rate">Rate </Link> */}
+        {/* <Link to="/app/price">Metal Price</Link>
+        <Link to="/app/products">Products </Link> */}
+        {/* <Link to="/app/settings">Settings </Link>
+        <Link to="/app/theme">Theme </Link> */}
+        <Link to="/app/update"> Update</Link>
+        <Link to="/app/apply"> Apply</Link>
+
       </NavMenu>
       <Outlet />
     </AppProvider>
