@@ -94,6 +94,13 @@ export async function action({ request }) {
             metafield.node.key === 'making_charges'
         );
 
+        const stoneWeightMetafield = node.metafields.edges.find(
+          (metafield) =>
+            metafield.node.namespace === 'custom' &&
+            metafield.node.key === 'stone_weight'
+        );
+
+        const stoneWeight = stoneWeightMetafield ? parseFloat(stoneWeightMetafield.node.value) : 0;
         const goldWeight = goldWeightMetafield ? parseFloat(goldWeightMetafield.node.value) : 0;
         const makingCharges = makingChargesMetafield ? parseFloat(makingChargesMetafield.node.value) : 0;
 
@@ -114,11 +121,13 @@ export async function action({ request }) {
 
           const goldRate = myData.gold_rate_22K;
           const gstRate = myData.gstRate;
+          const stoneRate = myData.stone_rate;
 
+          const stonPrice = stoneWeight * stoneRate;
           const goldActualPrice = goldRate * goldWeight;
-          const goldMakingAmount = goldActualPrice * makingCharges / 100;
-          const gstAmount = (goldMakingAmount + goldActualPrice) * gstRate / 100;
-          const calcPrice = (goldMakingAmount + goldActualPrice) + gstAmount;
+          const goldMakingAmount = (stonPrice + goldActualPrice) * makingCharges / 100;
+          const gstAmount = (stonPrice + goldMakingAmount + goldActualPrice) * gstRate / 100;
+          const calcPrice = (stonPrice + goldMakingAmount + goldActualPrice) + gstAmount;
 
           const newPrice = calcPrice.toFixed(2);
 

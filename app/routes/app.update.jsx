@@ -24,12 +24,14 @@ export async function action({ request }) {
         update: {
             id: "1",
             gold_rate_22K: data.gold_rate_22K,
-            gstRate: data.gstRate
+            gstRate: data.gstRate,
+            stone_rate: data.stoneRate
         },
         create: {
             id: "1",
             gold_rate_22K: data.gold_rate_22K,
-            gstRate: data.gstRate
+            gstRate: data.gstRate,
+            stone_rate: data.stoneRate
         },
     });
 
@@ -57,27 +59,37 @@ export default function Update() {
                         <TextField
                             label="Enter Gold Rate"
                             name="gold_rate_22K"
-                            value={formState?.gold_22K}
+                            value={formState?.gold_rate_22K}
                             onChange={(value) =>
                                 setFormState({
                                     ...formState,
-                                    gold_22K: value,
+                                    gold_rate_22K: value,
                                 })
                             }
-                            placeholder={formState?.gold_rate_22K}
                             helpText="22K gold rate of 1/g"
+                        />
+                        <TextField
+                            label="Enter Stone Rate"
+                            name="stoneRate"
+                            value={formState?.stone_rate}
+                            onChange={(value) =>
+                                setFormState({
+                                    ...formState,
+                                    stone_rate: value,
+                                })
+                            }
+                            helpText="Stone rate per 0.1/ct"
                         />
                         <TextField
                             label="GST Rate"
                             name="gstRate"
-                            value={formState?.gstR}
+                            value={formState?.gstRate}
                             onChange={(value) =>
                                 setFormState({
                                     ...formState,
-                                    gstR: value,
+                                    gstRate: value,
                                 })
                             }
-                            placeholder={formState?.gstRate}
                             helpText="Gst rate only (No % symbol required)"
                         />
                     </FormLayout.Group>
