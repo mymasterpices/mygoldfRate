@@ -24,14 +24,12 @@ export async function action({ request }) {
         update: {
             id: "1",
             gold_rate_22K: data.gold_rate_22K,
-            gstRate: data.gstRate,
-            stone_rate: data.stoneRate
+            gstRate: data.gstRate
         },
         create: {
             id: "1",
             gold_rate_22K: data.gold_rate_22K,
-            gstRate: data.gstRate,
-            stone_rate: data.stoneRate
+            gstRate: data.gstRate
         },
     });
 
@@ -67,18 +65,6 @@ export default function Update() {
                                 })
                             }
                             helpText="22K gold rate of 1/g"
-                        />
-                        <TextField
-                            label="Enter Stone Rate"
-                            name="stoneRate"
-                            value={formState?.stone_rate}
-                            onChange={(value) =>
-                                setFormState({
-                                    ...formState,
-                                    stone_rate: value,
-                                })
-                            }
-                            helpText="Stone rate per 0.1/ct"
                         />
                         <TextField
                             label="GST Rate"

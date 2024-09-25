@@ -1,0 +1,53 @@
+<div class="priceBrackUp">
+  <button class="priceBreakup">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAy0lEQVR4nO2Vuw3CMBRFT0dmACp28ACkonQfkFIxSvpMwKekJROwA5Ama0AZZOlVkWPnI1mAcqUrF9fJsfQSX5g0UkvgDJRA1cMlcAIWPkAEPIEXcAUuDd+AWtZmZva/gQcwc0FieUnSkm8kN6tNW8nXLkgim9RAiPIcMjxEAyuLU8nTllz3gYx10gWSAXuLc8nzljz7upmov4FkIWZSh/i6dIj/RP384OORt/Cuyy0cSR+YXih69kkhz919fYI023FgMx6AuQ8wCZc+M0ehLh+qhskAAAAASUVORK5CYII=">
+    <span>Price Breack-Up</span>
+  </button>
+</div>
+
+<style>
+  button.priceBreakup {
+    background: transparent;
+    border: 1px solid #250331;
+    padding: 10px 20px;
+    color: #250331;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 5px;
+    transition: all 0.5s ease-in-out;
+    width: 100%;
+    margin-top: -15px;
+    border-radius: 50px;
+  }
+  button.priceBreakup:hover {
+    background: #250331;
+    color: #fff;
+  }
+  button.priceBreakup:hover img {
+    filter: invert(1);
+  }
+</style>
+
+{% comment %}
+  {% assign avg_rating = block.settings.product.metafields.demo.avg_rating.value | round %}
+  <span style="color:{{ block.settings.colour }}">
+    {% render 'stars', rating: avg_rating %}
+  </span>
+  {% if avg_rating >= 4 %}
+    <br>
+    <img src="{{ "thumbs-up.png" | asset_img_url: '15x' }}" height="15" width="15" loading="lazy">
+    {{ 'ratings.home.recommendationText' | t }}
+  {% endif %}
+{% endcomment %}
+
+{% schema %}
+{
+  "name": "Price Break-Up",
+  "target": "section",
+  "settings": [
+    { "type": "product", "id": "product", "label": "product", "autofill": true },
+    { "type": "color", "id": "colour", "label": "Star Colour", "default": "#000000" }
+  ]
+}
+{% endschema %}
