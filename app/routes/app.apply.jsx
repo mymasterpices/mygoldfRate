@@ -3,7 +3,7 @@ import { Page, Layout, Card, Button, BlockStack, Text } from '@shopify/polaris';
 import { TitleBar } from '@shopify/app-bridge-react';
 import { Form, useSubmit, useActionData } from '@remix-run/react';
 import { json } from '@remix-run/node';
-import { authenticate } from '~/shopify.server';
+import { authenticate } from '../shopify.server';
 import db from '../db.server'; // Import your Prisma DB
 
 export async function action({ request }) {
