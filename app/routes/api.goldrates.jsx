@@ -1,4 +1,6 @@
 import db from "../db.server";
+import { cors } from 'remix-utils/cors';
+import { json } from "@remix-run/node";
 
 export async function loader() {
     const current_rate = await db.goldGSTRates.findFirst();
@@ -7,6 +9,6 @@ export async function loader() {
         return "Something went wrong...";
     }
     else {
-        return current_rate;
+        return cors(json(current_rate));
     }
 }
